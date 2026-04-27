@@ -1,50 +1,73 @@
-# OlaMar — Ropa Deportiva de Lujo
+# React + TypeScript + Vite
 
-E-commerce SPA para **OlaMar**, una marca de ropa deportiva de lujo con sede en Cuenca, Ecuador. Interfaz editorial minimalista con interacciones premium, carrito lateral y checkout por WhatsApp.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Tech Stack
+Currently, two official plugins are available:
 
-| Capa | Tecnología |
-|------|-----------|
-| Framework | TanStack Start (SSR) |
-| Frontend | React 19, TanStack Router v1 |
-| Build | Vite 7 |
-| Estilos | Tailwind CSS 4 + CSS personalizado |
-| Tipografía | Playfair Display + DM Sans (Google Fonts) |
-| Estado | React Context + useReducer |
-| Deployment | Netlify |
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## Funcionalidades
+## React Compiler
 
-- **Navbar sticky** con grid de 3 columnas, logo centrado, contador de carrito dinámico
-- **Hero editorial** a pantalla completa con imagen dividida y botón outline-to-fill
-- **Categorías tendencia** — fila de 5 columnas con imágenes circulares
-- **Grillas de productos** — 4 columnas (desktop), aspecto 4:5, con selector de talla y botón "Añadir" que aparece al hacer hover
-- **Carrito lateral** (side-drawer) desde la derecha con controles de cantidad y total automático
-- **Checkout por WhatsApp** — genera mensaje formateado con resumen del pedido y abre `wa.me/593987336646`
-- **Botón flotante de WhatsApp** en esquina inferior izquierda
-- **Cursor magnético personalizado** con `mix-blend-mode: difference`
-- **Animaciones scroll-reveal** con IntersectionObserver
-- **Marquee de marca** animado con CSS
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Cómo ejecutarlo localmente
+## Expanding the ESLint configuration
 
-```bash
-# Instalar dependencias
-npm install
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-# Servidor de desarrollo (con emulación Netlify)
-netlify dev
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-# O solo Vite dev server
-npm run dev
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
 
-# Build de producción
-npm run build
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
 
-El servidor de desarrollo corre en `http://localhost:8888` (Netlify CLI) o `http://localhost:3000` (Vite directo).
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-## Variables de Entorno
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-No se requieren variables de entorno para la funcionalidad principal (carrito + WhatsApp checkout).
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
