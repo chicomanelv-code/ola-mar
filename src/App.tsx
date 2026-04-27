@@ -11,7 +11,6 @@ function App() {
   const container = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // 1. Smooth Scroll (Lenis) - El alma de un sitio Awwwards
     const lenis = new Lenis();
     function raf(time: number) {
       lenis.raf(time);
@@ -21,118 +20,97 @@ function App() {
   }, []);
 
   useGSAP(() => {
-    // 2. Animación de Texto (Split Type)
-    const text = new SplitType('.split-text', { types: 'chars' });
+    const tl = gsap.timeline();
     
-    gsap.from(text.chars, {
-      y: 100,
-      stagger: 0.02,
-      duration: 1.5,
-      ease: "power4.out",
-    });
+    // Animación del Logo y Títulos al entrar
+    tl.from(".nav-item", { y: -20, opacity: 0, stagger: 0.1, duration: 0.8, ease: "power3.out" })
+      .from(".logo-main", { scale: 0.8, opacity: 0, duration: 1.2, ease: "expo.out" }, "-=0.5")
+      .from(".split-text .char", { y: 100, stagger: 0.01, duration: 1, ease: "power4.out" }, "-=1");
 
-    // 3. Efecto Parallax en Imágenes
-    gsap.utils.toArray<HTMLElement>('.parallax-img').forEach((layer) => {
-      const depth = 0.2;
-      const movement = -(layer.offsetHeight * depth);
-      gsap.to(layer, {
-        y: movement,
-        ease: "none",
-        scrollTrigger: {
-          trigger: layer,
-          scrub: true
-        }
-      });
-    });
-
-    // 4. Revelación de secciones
-    gsap.from(".reveal-box", {
-      width: 0,
-      duration: 1.5,
-      ease: "expo.inOut",
+    // Parallax suave en secciones de imagen
+    gsap.to(".parallax-bg", {
+      yPercent: 20,
+      ease: "none",
       scrollTrigger: {
-        trigger: ".reveal-box",
-        start: "top 80%"
+        trigger: ".parallax-container",
+        scrub: true
       }
     });
 
   }, { scope: container });
 
   return (
-    <div ref={container} className="bg-[#0f0f0f] text-[#e5e5e5] font-['Outfit'] overflow-hidden">
+    <div ref={container} className="bg-[#f8f7f4] text-[#1a1a1a] font-['Outfit'] overflow-hidden">
       
-      {/* CURSOR CUSTOM (Opcional, muy Awwwards) */}
-      <div className="fixed top-0 left-0 w-4 h-4 bg-[#4a3728] rounded-full pointer-events-none z-[999] mix-blend-difference" id="cursor"></div>
+      {/* NAVBAR DIVIDIDA (AWWWARDS STYLE) */}
+      <nav className="fixed w-full z-50 p-6 md:p-10 flex justify-between items-center mix-blend-difference text-white md:text-black md:mix-blend-normal">
+        <div className="hidden md:flex gap-10 nav-item text-[9px] tracking-[0.3em] uppercase font-bold">
+          <a href="#" className="hover:opacity-50 transition-opacity">Shop</a>
+          <a href="#" className="hover:opacity-50 transition-opacity">Colección</a>
+        </div>
+        
+        <div className="logo-main w-12 md:w-16">
+          <img src="/logo-olamar.png" alt="Ola Mar Logo" className="w-full h-auto" />
+        </div>
 
-      {/* NAV MINIMALISTA */}
-      <nav className="fixed w-full z-50 p-10 flex justify-between items-center mix-blend-difference">
-        <span className="font-['Syne'] font-extrabold text-2xl tracking-tighter uppercase">Ola Mar</span>
-        <div className="flex gap-10 text-[10px] tracking-[0.4em] uppercase font-bold">
-          <a href="#" className="hover:line-through">Colección</a>
-          <a href="#" className="hover:line-through">Studio</a>
-          <a href="#" className="hover:line-through">Shop</a>
+        <div className="flex gap-6 md:gap-10 nav-item text-[9px] tracking-[0.3em] uppercase font-bold">
+          <a href="#" className="hover:opacity-50 transition-opacity">Story</a>
+          <a href="https://wa.me/tu-numero" className="border-b border-current pb-1">WhatsApp</a>
         </div>
       </nav>
 
-      {/* HERO: BRUTALISMO MODERNO */}
-      <section className="h-screen flex flex-col justify-center items-center relative">
-        <div className="overflow-hidden">
-          <h1 className="split-text font-['Syne'] text-[18vw] font-extrabold leading-[0.8] uppercase tracking-tighter">
+      {/* HERO: MINIMALISMO PURO */}
+      <section className="h-screen flex flex-col justify-center items-center px-6">
+        <div className="overflow-hidden mb-4">
+          <h1 className="split-text font-['Syne'] text-[18vw] font-extrabold leading-[0.8] uppercase tracking-tighter text-[#4a3728]">
             Ola Mar
           </h1>
         </div>
-        <div className="absolute bottom-20 right-10 flex flex-col items-end">
-          <p className="text-[10px] tracking-[0.5em] uppercase text-[#4a3728] font-bold">Performance & Style</p>
-          <div className="w-20 h-[1px] bg-[#4a3728] mt-2"></div>
+        <p className="split-text text-[10px] md:text-xs tracking-[0.6em] uppercase font-light text-stone-400">
+          Equilibrio entre rendimiento y estética
+        </p>
+      </section>
+
+      {/* SECCIÓN DE IMAGEN DE IMPACTO (MOKKA) */}
+      <section className="parallax-container relative h-[120vh] w-full overflow-hidden bg-stone-200">
+        <img 
+          src="/mokka-hero.jpg" 
+          className="parallax-bg absolute top-[-10%] left-0 w-full h-[140%] object-cover" 
+          alt="Mokka Set Luxury"
+        />
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="absolute bottom-20 left-10 text-white">
+          <span className="text-[10px] tracking-[0.4em] uppercase opacity-70">New Arrival</span>
+          <h2 className="text-6xl font-['Syne'] font-bold uppercase tracking-tighter">Mokka 26'</h2>
         </div>
       </section>
 
-      {/* SECCIÓN TRANSICIÓN: TEXTO GRANDE */}
-      <section className="py-60 px-10">
-        <h2 className="text-5xl md:text-8xl font-['Syne'] font-bold max-w-5xl leading-tight">
-          Diseñado para el <span className="italic text-[#4a3728]">movimiento</span>. 
-          Creado para la <span className="font-light opacity-50 underline">distinción</span>.
+      {/* FILOSOFÍA DE MARCA */}
+      <section className="py-40 px-10 max-w-5xl mx-auto text-center">
+        <img src="/logo-olamar.png" className="w-8 mx-auto mb-10 opacity-20" alt="Icon" />
+        <h2 className="text-4xl md:text-6xl font-['Syne'] font-bold leading-tight tracking-tight">
+          No solo creamos ropa, diseñamos la confianza para <span className="text-[#4a3728]">conquistar</span> cada entrenamiento.
         </h2>
       </section>
 
-      {/* GRID DINÁMICO DE PRODUCTOS */}
-      <section className="min-h-screen px-4 flex flex-col md:flex-row gap-4 mb-20">
-        <div className="flex-1 h-[120vh] relative overflow-hidden group">
-          <div className="reveal-box absolute inset-0 bg-[#4a3728] z-10"></div>
-          <img 
-            src="/mokka-back.jpg" 
-            className="parallax-img w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" 
-          />
-          <div className="absolute bottom-10 left-10 z-20">
-            <p className="font-['Syne'] text-4xl font-bold uppercase">Mokka Set</p>
-            <p className="text-xs tracking-widest opacity-50">COMPRESSION TECH 2026</p>
+      {/* FOOTER BRUTALISTA */}
+      <footer className="bg-[#1a1a1a] text-[#f8f7f4] pt-40 pb-10 px-10">
+        <div className="flex flex-col md:flex-row justify-between items-end border-b border-white/10 pb-20 mb-10">
+          <div>
+            <img src="/logo-olamar.png" className="w-20 invert mb-10" alt="Logo" />
+            <p className="text-4xl md:text-7xl font-['Syne'] font-extrabold uppercase tracking-tighter">
+              Ready to <br/> move?
+            </p>
+          </div>
+          <div className="mt-10 md:mt-0 text-right">
+            <p className="text-xs tracking-[0.3em] uppercase mb-4 opacity-50">Contacto</p>
+            <p className="text-xl">hola@olamar.com.ec</p>
+            <p className="text-xl">Cuenca, Ecuador</p>
           </div>
         </div>
-
-        <div className="flex-1 md:mt-40 h-[100vh] relative overflow-hidden">
-          <img 
-            src="/mokka-front.jpg" 
-            className="parallax-img w-full h-full object-cover" 
-          />
-          <div className="absolute top-10 right-10 text-right">
-            <span className="text-[10px] border border-white/20 px-4 py-2 rounded-full">EDICIÓN LIMITADA</span>
-          </div>
-        </div>
-      </section>
-
-      {/* FOOTER EXPERIMENTAL */}
-      <footer className="h-screen flex flex-col justify-between p-10 bg-[#4a3728] text-white">
-        <div className="flex justify-between items-start">
-          <p className="text-xs uppercase tracking-widest">Ola Mar Studio <br/> Cuenca, Ecuador</p>
-          <p className="text-9xl font-['Syne'] font-bold">26'</p>
-        </div>
-        <div className="text-center pb-10">
-          <p className="text-[15vw] font-['Syne'] font-bold tracking-tighter uppercase leading-none">Únete</p>
-          <div className="flex justify-center gap-10 mt-10 text-xs font-bold uppercase tracking-widest">
-            <a href="#">Instagram</a>
-            <a href="#">WhatsApp</a>
-            <a href="#">TikTok</a>
-          </div>
+        <div className="flex justify-between text-[9px] tracking-[0.4em] uppercase opacity-40">
+          <span>© 2026 Ola Mar Studio</span>
+          <span>Desarrollado con precisión</span>
         </div>
       </footer>
 
