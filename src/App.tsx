@@ -213,8 +213,8 @@ function App() {
       </section>
 
       {/* SECCIÓN EDITORIAL INTERACTIVA */}
-      <section className="editorial-section py-40 bg-[#f4f2ee] px-6 relative">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-24">
+      <section className="editorial-section py-20 md:py-40 bg-[#f4f2ee] px-6 relative">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 md:gap-24">
           
           {/* Imagen con Puntos Interactivos */}
           <div className="relative w-full md:w-1/2 aspect-[3/4] overflow-hidden rounded-sm shadow-2xl bg-stone-300">
@@ -236,18 +236,18 @@ function App() {
           </div>
 
           {/* Información Dinámica */}
-          <div className="w-full md:w-1/2 min-h-[400px] flex flex-col justify-center space-y-12">
+          <div className="w-full md:w-1/2 min-h-[300px] md:min-h-[400px] flex flex-col justify-center space-y-8 md:space-y-12">
             {!activeFeature ? (
               <div className="space-y-6">
                 <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-stone-400">Interacción</span>
-                <h2 className="font-['Syne'] text-6xl font-extrabold uppercase tracking-tighter">Explora la <br/> <span className="text-[#4a3728]">Ingeniería.</span></h2>
+                <h2 className="font-['Syne'] text-4xl md:text-6xl font-extrabold uppercase tracking-tighter">Explora la <br/> <span className="text-[#4a3728]">Ingeniería.</span></h2>
                 <p className="text-stone-400 text-sm italic">Selecciona un punto en la prenda para conocer los detalles técnicos de producción.</p>
               </div>
             ) : (
-              <div ref={infoBoxRef} className="space-y-8 bg-white p-12 shadow-2xl border-l-4 border-[#4a3728]">
+              <div ref={infoBoxRef} className="space-y-6 md:space-y-8 bg-white p-6 md:p-12 shadow-2xl border-l-4 border-[#4a3728] w-full overflow-hidden">
                 <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#4a3728]">Detalle Técnico</span>
-                <h3 className="font-['Syne'] text-4xl md:text-5xl font-extrabold uppercase tracking-tighter leading-none">{activeFeature.label}</h3>
-                <p className="text-stone-500 text-base leading-relaxed font-light">{activeFeature.desc}</p>
+                <h3 className="font-['Syne'] text-3xl md:text-4xl lg:text-5xl font-extrabold uppercase tracking-tighter leading-tight break-words">{activeFeature.label}</h3>
+                <p className="text-stone-500 text-sm md:text-base leading-relaxed font-light">{activeFeature.desc}</p>
                 <button onClick={() => setActiveFeature(null)} className="interactive text-[9px] uppercase font-bold tracking-widest text-stone-400 hover:text-black transition-colors">Cerrar detalle</button>
               </div>
             )}
