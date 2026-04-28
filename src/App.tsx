@@ -44,9 +44,13 @@ function App() {
     // 3. Hero Animación
     const text = new SplitType('.hero-title-text', { types: 'chars' });
     
-    // Auras más visibles y dinámicas
-    gsap.to(".aura-1", { x: 100, y: 50, duration: 6, repeat: -1, yoyo: true, ease: "sine.inOut" });
-    gsap.to(".aura-2", { x: -80, y: -60, duration: 8, repeat: -1, yoyo: true, ease: "sine.inOut" });
+    // ---> AQUÍ ESTÁN LAS AURAS NUEVAS CON SCALE PARA QUE PULSEN <---
+    gsap.to(".aura-1", { 
+      x: 60, y: 40, scale: 1.2, duration: 5, repeat: -1, yoyo: true, ease: "sine.inOut" 
+    });
+    gsap.to(".aura-2", { 
+      x: -50, y: -30, scale: 0.9, duration: 7, repeat: -1, yoyo: true, ease: "sine.inOut" 
+    });
 
     tl.from(".nav-item", { y: -20, opacity: 0, stagger: 0.1, duration: 0.8, ease: "power3.out" })
       .from(".logo-hero", { y: 50, opacity: 0, scale: 0.5, duration: 1.5, ease: "expo.out" }, "-=0.5")
@@ -135,24 +139,26 @@ function App() {
         </div>
       </nav>
 
-      {/* HERO SECTION CON FONDO MEJORADO */}
-      <section className="h-screen flex flex-col justify-center items-center relative px-6 text-center overflow-hidden">
-        {/* Grid de Ingeniería y Auras más fuertes */}
-        <div className="absolute inset-0 z-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px]"></div>
-        <div className="absolute inset-0 z-0 opacity-80 blur-[80px] pointer-events-none mix-blend-multiply">
-          <div className="aura-1 absolute top-[10%] left-[20%] w-[40%] h-[40%] rounded-full bg-[#4a3728]/40"></div>
-          <div className="aura-2 absolute bottom-[20%] right-[20%] w-[50%] h-[50%] rounded-full bg-[#d4c7b8]/60"></div>
+      {/* HERO SECTION */}
+      <section className="h-[90vh] md:h-screen flex flex-col justify-center items-center relative px-4 text-center overflow-hidden">
+        {/* Fondo de Auras - Opacidad y Desenfoque ajustados para visibilidad */}
+        <div className="absolute inset-0 z-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:30px_30px]"></div>
+        <div className="absolute inset-0 z-0 opacity-100 blur-[80px] md:blur-[120px] pointer-events-none">
+          <div className="aura-1 absolute top-[20%] left-[10%] w-[50%] h-[50%] rounded-full bg-[#4a3728]/25"></div>
+          <div className="aura-2 absolute bottom-[20%] right-[10%] w-[60%] h-[60%] rounded-full bg-[#d4c7b8]/35"></div>
         </div>
 
-        <div className="logo-hero w-24 md:w-32 mb-8 z-10">
+        <div className="logo-hero w-20 md:w-32 mb-6 z-10">
           <img src="/logo-olamar.png" alt="Ola Mar Signature" className="w-full h-auto" />
         </div>
-        <div className="overflow-hidden z-10">
-          <h1 className="hero-title-text font-['Syne'] text-[12vw] md:text-[9rem] font-extrabold leading-[0.8] uppercase tracking-tighter text-[#4a3728]">
+        
+        <div className="overflow-hidden z-10 w-full">
+          <h1 className="hero-title-text font-['Syne'] text-[13vw] md:text-[9rem] font-extrabold leading-none uppercase tracking-tighter text-[#4a3728] whitespace-nowrap">
             Ola Mar
           </h1>
         </div>
-        <p className="hero-sub mt-8 text-[10px] md:text-xs tracking-[0.6em] uppercase font-light text-stone-500 z-10 bg-white/50 px-4 py-2 rounded-full backdrop-blur-sm">
+        
+        <p className="hero-sub mt-6 text-[9px] md:text-xs tracking-[0.4em] uppercase font-light text-stone-400 z-10 bg-white/40 px-4 py-2 rounded-full backdrop-blur-md">
           Where Technical Precision Meets Fluid Design
         </p>
       </section>
@@ -257,17 +263,33 @@ function App() {
         </div>
       </section>
 
-      {/* FOOTER RESTAURADO COMPLETAMENTE */}
-      <footer className="bg-[#1a1a1a] pt-40 pb-12 px-10">
-        <div className="flex flex-col md:flex-row justify-between items-start mb-24 gap-16 text-stone-500">
-          <img src="/logo-olamar.png" alt="Logo" className="w-20 h-auto invert opacity-80" />
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-16 text-[10px] tracking-[0.3em] uppercase font-bold">
-            <div className="flex flex-col gap-6"><span className="text-white">Social</span><a href="#" className="interactive hover:text-white transition-colors">Instagram</a><a href="#" className="interactive hover:text-white transition-colors">TikTok</a></div>
-            <div className="flex flex-col gap-6"><span className="text-white">Legal</span><a href="#" className="interactive hover:text-white transition-colors">Privacidad</a><a href="#" className="interactive hover:text-white transition-colors">Envíos</a></div>
-            <div className="flex flex-col gap-6"><span className="text-white">Location</span><p className="text-stone-600 font-medium normal-case">Cuenca, Ecuador</p></div>
+      {/* FOOTER */}
+      <footer className="bg-[#1a1a1a] pt-24 pb-8 px-6 md:px-10">
+        <div className="flex flex-col md:flex-row justify-between items-start mb-16 gap-10 text-stone-500">
+          <img src="/logo-olamar.png" alt="Logo" className="w-14 h-auto invert opacity-80" />
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-10 md:gap-16 text-[9px] tracking-[0.2em] uppercase font-bold">
+            <div className="flex flex-col gap-4">
+              <span className="text-white">Social</span>
+              <a href="#" className="interactive hover:text-white transition-colors">Instagram</a>
+              <a href="#" className="interactive hover:text-white transition-colors">TikTok</a>
+            </div>
+            <div className="flex flex-col gap-4">
+              <span className="text-white">Legal</span>
+              <a href="#" className="interactive hover:text-white transition-colors">Privacidad</a>
+              <a href="#" className="interactive hover:text-white transition-colors">Envíos</a>
+            </div>
+            <div className="flex flex-col gap-4">
+              <span className="text-white">Location</span>
+              <p className="text-stone-600 font-medium normal-case">Cuenca, Ecuador</p>
+            </div>
           </div>
         </div>
-        <p className="text-[12vw] font-['Syne'] font-extrabold uppercase tracking-tighter text-stone-900/50 leading-none select-none">Ola Mar Studio</p>
+        
+        {/* Texto de fondo - Ajustado para no ser invasivo */}
+        <p className="text-[14vw] font-['Syne'] font-extrabold uppercase tracking-tighter text-stone-900/40 leading-none select-none text-center md:text-left">
+          Ola Mar Studio
+        </p>
       </footer>
 
       <style>{`
