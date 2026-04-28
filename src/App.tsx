@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -11,9 +11,13 @@ function App() {
   const container = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
+  const infoBoxRef = useRef<HTMLDivElement>(null);
+  
+  // Estado para la característica interactiva de la sección editorial
+  const [activeFeature, setActiveFeature] = useState<{label: string, desc: string} | null>(null);
 
   useEffect(() => {
-    // 1. Smooth Scroll (Lenis)
+    // 1. Smooth Scroll
     const lenis = new Lenis();
     function raf(time: number) {
       lenis.raf(time);
@@ -21,7 +25,7 @@ function App() {
     }
     requestAnimationFrame(raf);
 
-    // 2. Lógica del Mouse Pro
+    // 2. Custom Cursor
     const moveCursor = (e: MouseEvent) => {
       gsap.to(cursorRef.current, {
         x: e.clientX,
@@ -37,18 +41,19 @@ function App() {
   useGSAP(() => {
     const tl = gsap.timeline();
     
-    // 3. Animación del Hero & Auras
+    // 3. Hero Animación
     const text = new SplitType('.hero-title-text', { types: 'chars' });
     
-    gsap.to(".aura-1", { x: 50, y: 30, duration: 8, repeat: -1, yoyo: true, ease: "sine.inOut" });
-    gsap.to(".aura-2", { x: -40, y: -20, duration: 10, repeat: -1, yoyo: true, ease: "sine.inOut" });
+    // Auras más visibles y dinámicas
+    gsap.to(".aura-1", { x: 100, y: 50, duration: 6, repeat: -1, yoyo: true, ease: "sine.inOut" });
+    gsap.to(".aura-2", { x: -80, y: -60, duration: 8, repeat: -1, yoyo: true, ease: "sine.inOut" });
 
     tl.from(".nav-item", { y: -20, opacity: 0, stagger: 0.1, duration: 0.8, ease: "power3.out" })
       .from(".logo-hero", { y: 50, opacity: 0, scale: 0.5, duration: 1.5, ease: "expo.out" }, "-=0.5")
       .from(text.chars, { y: 100, opacity: 0, stagger: 0.02, duration: 1, ease: "power4.out" }, "-=1")
       .from(".hero-sub", { opacity: 0, y: 20, duration: 1 }, "-=0.5");
 
-    // 4. Interacción del Cursor con Menús
+    // Interacción del Cursor
     const links = document.querySelectorAll('a, button, .interactive');
     links.forEach(link => {
       link.addEventListener('mouseenter', () => {
@@ -59,7 +64,7 @@ function App() {
       });
     });
 
-    // 5. SECCIÓN PRODUCTO PINNED
+    // 4. SECCIÓN PRODUCTO PINNED
     const section = triggerRef.current;
     const slides = gsap.utils.toArray<HTMLElement>('.product-slide');
     const productTl = gsap.timeline({
@@ -79,17 +84,7 @@ function App() {
                .from(slide.querySelector('.slide-content'), { y: 100, opacity: 0, duration: 0.5 }, i + 0.2);
     });
 
-    // 6. Animaciones Secciones Nuevas
-    gsap.from(".label-dot", {
-      opacity: 0,
-      scale: 0,
-      stagger: 0.3,
-      scrollTrigger: {
-        trigger: ".editorial-section",
-        start: "top 60%"
-      }
-    });
-
+    // 5. Animación del Video Seamless
     gsap.to(".video-reveal-container iframe", {
       yPercent: 15,
       ease: "none",
@@ -101,6 +96,16 @@ function App() {
 
   }, { scope: container });
 
+  // Animación del cuadro de información al hacer clic
+  useGSAP(() => {
+    if (activeFeature) {
+      gsap.fromTo(infoBoxRef.current, 
+        { opacity: 0, y: 20, scale: 0.95 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "back.out(1.7)" }
+      );
+    }
+  }, [activeFeature]);
+
   const categories = [
     { title: "Mokka", img: "/mokka-hero.jpg", subtitle: "Colección Signature" },
     { title: "Leggings", img: "/leggings-category.jpg", subtitle: "Tecnología Seamless" },
@@ -109,29 +114,34 @@ function App() {
     { title: "Essentials", img: "/tops-category.jpg", subtitle: "Tops & Shorts" },
   ];
 
+  const specs = [
+    { id: 1, label: "Corte Ergonómico", desc: "Patronaje diseñado que se adapta al movimiento natural sin restricciones, garantizando soporte extremo.", top: "25%", left: "35%" },
+    { id: 2, label: "Tecnología Seamless", desc: "Estructura sin costuras laterales para evitar roces y mejorar la estética durante el entrenamiento.", bottom: "35%", right: "30%" },
+    { id: 3, label: "Compresión 360°", desc: "Nylon de alta densidad con Spandex para un soporte muscular óptimo y control de abdomen.", top: "50%", left: "25%" }
+  ];
+
   return (
     <div ref={container} className="bg-[#f8f7f4] text-[#1a1a1a] font-['Outfit'] cursor-none overflow-hidden">
       
       {/* MOUSE CUSTOM */}
-      <div 
-        ref={cursorRef} 
-        className="fixed top-0 left-0 w-4 h-4 bg-[#4a3728] rounded-full pointer-events-none z-[999] -translate-x-1/2 -translate-y-1/2 mix-blend-difference hidden md:block"
-      ></div>
+      <div ref={cursorRef} className="fixed top-0 left-0 w-4 h-4 bg-[#4a3728] rounded-full pointer-events-none z-[999] -translate-x-1/2 -translate-y-1/2 mix-blend-difference hidden md:block"></div>
 
       {/* NAVBAR */}
       <nav className="fixed w-full z-[100] p-6 md:p-10 flex justify-between items-center mix-blend-difference text-white">
         <div className="nav-item text-[10px] tracking-[0.4em] uppercase font-bold interactive">Studio — 2026</div>
         <div className="flex gap-8 nav-item text-[10px] tracking-[0.4em] uppercase font-bold">
-          <a href="#" className="hover:opacity-50 transition-opacity">Colección</a>
-          <a href="https://wa.me/tu-numero" className="border-b border-white/30 pb-1">Shop</a>
+          <a href="#" className="interactive hover:opacity-50 transition-opacity">Colección</a>
+          <a href="https://wa.me/tu-numero" className="interactive border-b border-white/30 pb-1">Shop</a>
         </div>
       </nav>
 
-      {/* HERO SECTION CON AURAS */}
+      {/* HERO SECTION CON FONDO MEJORADO */}
       <section className="h-screen flex flex-col justify-center items-center relative px-6 text-center overflow-hidden">
-        <div className="absolute inset-0 z-0 opacity-40 blur-[120px] pointer-events-none">
-          <div className="aura-1 absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-[#4a3728]/20"></div>
-          <div className="aura-2 absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#d4c7b8]/30"></div>
+        {/* Grid de Ingeniería y Auras más fuertes */}
+        <div className="absolute inset-0 z-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+        <div className="absolute inset-0 z-0 opacity-80 blur-[80px] pointer-events-none mix-blend-multiply">
+          <div className="aura-1 absolute top-[10%] left-[20%] w-[40%] h-[40%] rounded-full bg-[#4a3728]/40"></div>
+          <div className="aura-2 absolute bottom-[20%] right-[20%] w-[50%] h-[50%] rounded-full bg-[#d4c7b8]/60"></div>
         </div>
 
         <div className="logo-hero w-24 md:w-32 mb-8 z-10">
@@ -142,7 +152,7 @@ function App() {
             Ola Mar
           </h1>
         </div>
-        <p className="hero-sub mt-8 text-[10px] md:text-xs tracking-[0.6em] uppercase font-light text-stone-400 z-10">
+        <p className="hero-sub mt-8 text-[10px] md:text-xs tracking-[0.6em] uppercase font-light text-stone-500 z-10 bg-white/50 px-4 py-2 rounded-full backdrop-blur-sm">
           Where Technical Precision Meets Fluid Design
         </p>
       </section>
@@ -161,13 +171,13 @@ function App() {
             <div className="slide-content relative h-full flex flex-col justify-center items-center text-white">
                <span className="text-[10px] tracking-[0.8em] uppercase mb-4 opacity-70">{cat.subtitle}</span>
                <h2 className="text-7xl md:text-[12rem] font-['Syne'] font-bold uppercase tracking-tighter leading-none">{cat.title}</h2>
-               <button className="mt-10 px-8 py-3 border border-white/30 rounded-full text-[9px] tracking-[0.3em] uppercase hover:bg-white hover:text-black transition-all interactive">Explorar</button>
+               <button className="interactive mt-10 px-8 py-3 border border-white/30 rounded-full text-[9px] tracking-[0.3em] uppercase hover:bg-white hover:text-black transition-all">Explorar</button>
             </div>
           </section>
         ))}
       </div>
 
-      {/* SECCIÓN TECNOLOGÍA SEAMLESS (VIDEO CINEMATOGRÁFICO) */}
+      {/* SECCIÓN TECNOLOGÍA SEAMLESS (VIDEO RESTAURADO) */}
       <section className="py-40 px-6 md:px-20 bg-white">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-20 items-center">
           <div className="w-full md:w-1/2 space-y-10">
@@ -190,7 +200,7 @@ function App() {
             </div>
           </div>
           
-          <div className="video-reveal-container w-full md:w-1/2 aspect-video rounded-sm overflow-hidden shadow-2xl relative bg-stone-100">
+          <div className="video-reveal-container interactive w-full md:w-1/2 aspect-video rounded-sm overflow-hidden shadow-2xl relative bg-stone-100">
             <iframe 
               className="absolute inset-0 w-full h-[120%] top-[-10%] pointer-events-none scale-105 grayscale hover:grayscale-0 transition-all duration-700"
               src="https://www.youtube.com/embed/cxySksdJJvs?autoplay=1&mute=1&loop=1&playlist=cxySksdJJvs&controls=0&showinfo=0&rel=0&modestbranding=1" 
@@ -202,43 +212,50 @@ function App() {
         </div>
       </section>
 
-      {/* SECCIÓN EDITORIAL TÉCNICA (LOOKBOOK) */}
-      <section className="editorial-section py-40 bg-[#f4f2ee] px-6">
+      {/* SECCIÓN EDITORIAL INTERACTIVA */}
+      <section className="editorial-section py-40 bg-[#f4f2ee] px-6 relative">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-24">
-          <div className="relative w-full md:w-1/2 aspect-[3/4] overflow-hidden rounded-sm shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] group">
-            <img src="/men-category.jpg" className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-1000" alt="Technical Apparel" />
+          
+          {/* Imagen con Puntos Interactivos */}
+          <div className="relative w-full md:w-1/2 aspect-[3/4] overflow-hidden rounded-sm shadow-2xl bg-stone-300">
+            <img src="/men-category.jpg" className="w-full h-full object-cover grayscale-[20%]" alt="Technical Look" />
             
-            <div className="absolute top-[25%] left-[35%] label-dot interactive">
-              <div className="w-3 h-3 bg-[#4a3728] rounded-full animate-ping absolute"></div>
-              <div className="w-3 h-3 bg-[#4a3728] rounded-full relative"></div>
-              <span className="absolute left-6 top-[-8px] whitespace-nowrap text-[9px] font-bold uppercase tracking-widest bg-white/90 backdrop-blur-md px-3 py-1 shadow-sm">Corte Ergonómico</span>
-            </div>
-
-            <div className="absolute bottom-[35%] right-[30%] label-dot interactive">
-              <div className="w-3 h-3 bg-[#4a3728] rounded-full animate-ping absolute"></div>
-              <div className="w-3 h-3 bg-[#4a3728] rounded-full relative"></div>
-              <span className="absolute right-6 top-[-8px] whitespace-nowrap text-[9px] font-bold uppercase tracking-widest bg-white/90 backdrop-blur-md px-3 py-1 shadow-sm">Alto Gramaje 400g</span>
-            </div>
+            {specs.map((spec) => (
+              <button 
+                key={spec.id}
+                onClick={() => setActiveFeature(spec)}
+                style={{ top: spec.top, left: spec.left, bottom: spec.bottom, right: spec.right }}
+                className="interactive absolute z-30 group"
+              >
+                <div className="w-6 h-6 bg-[#4a3728] rounded-full animate-ping absolute opacity-40 -translate-x-1 -translate-y-1"></div>
+                <div className="w-4 h-4 bg-[#4a3728] rounded-full relative flex items-center justify-center border-2 border-white shadow-lg">
+                  <div className="w-1 h-1 bg-white rounded-full"></div>
+                </div>
+              </button>
+            ))}
           </div>
 
-          <div className="w-full md:w-1/2 space-y-12">
-            <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-stone-400">Essential 01 — Materials</span>
-            <h2 className="font-['Syne'] text-7xl md:text-9xl font-extrabold uppercase leading-[0.8] tracking-tighter">
-              The <br/> <span className="text-[#4a3728]">Elite</span> <br/> Fiber.
-            </h2>
-            <div className="space-y-8 text-sm text-stone-500 max-w-sm font-light leading-relaxed">
-              <p>Diseño arquitectónico para el cuerpo. Cada hilo de algodón orgánico es seleccionado para ofrecer una densidad superior que mantiene la forma tras cada uso.</p>
-              <ul className="space-y-4 text-[10px] font-bold uppercase tracking-widest text-[#1a1a1a]">
-                <li className="flex items-center gap-3"><span className="w-4 h-[1px] bg-[#4a3728]"></span> Mangas montadas de precisión</li>
-                <li className="flex items-center gap-3"><span className="w-4 h-[1px] bg-[#4a3728]"></span> Costuras reforzadas ocultas</li>
-                <li className="flex items-center gap-3"><span className="w-4 h-[1px] bg-[#4a3728]"></span> Cuello con ribete de alta resistencia</li>
-              </ul>
-            </div>
+          {/* Información Dinámica */}
+          <div className="w-full md:w-1/2 min-h-[400px] flex flex-col justify-center space-y-12">
+            {!activeFeature ? (
+              <div className="space-y-6">
+                <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-stone-400">Interacción</span>
+                <h2 className="font-['Syne'] text-6xl font-extrabold uppercase tracking-tighter">Explora la <br/> <span className="text-[#4a3728]">Ingeniería.</span></h2>
+                <p className="text-stone-400 text-sm italic">Selecciona un punto en la prenda para conocer los detalles técnicos de producción.</p>
+              </div>
+            ) : (
+              <div ref={infoBoxRef} className="space-y-8 bg-white p-12 shadow-2xl border-l-4 border-[#4a3728]">
+                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#4a3728]">Detalle Técnico</span>
+                <h3 className="font-['Syne'] text-4xl md:text-5xl font-extrabold uppercase tracking-tighter leading-none">{activeFeature.label}</h3>
+                <p className="text-stone-500 text-base leading-relaxed font-light">{activeFeature.desc}</p>
+                <button onClick={() => setActiveFeature(null)} className="interactive text-[9px] uppercase font-bold tracking-widest text-stone-400 hover:text-black transition-colors">Cerrar detalle</button>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      {/* FOOTER */}
+      {/* FOOTER RESTAURADO COMPLETAMENTE */}
       <footer className="bg-[#1a1a1a] pt-40 pb-12 px-10">
         <div className="flex flex-col md:flex-row justify-between items-start mb-24 gap-16 text-stone-500">
           <img src="/logo-olamar.png" alt="Logo" className="w-20 h-auto invert opacity-80" />
